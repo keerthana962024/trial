@@ -1,0 +1,40 @@
+pipeline {
+    agent { node 'ansible' }
+
+    tools {
+	  maven 'Maven 3.9.6'
+	}
+    stages {
+        stage('git clone') {
+            steps {
+                git branch: 'main', credentialsId: '371eb9e8-9b5b-443a-b0d6-fe46cb107d71', url: 'https://github.com/keerthana962024/kprepo.git'
+            }
+			}
+        stage('clean') {
+            steps {
+                sh 'mvn clean'
+            }
+                        }
+        stage('list') {
+            steps {
+                sh 'ls -l'
+            }
+			}
+		stage('compile') {
+            steps {
+                sh 'mvn compile'
+            }
+			}
+		stage('sonarscan') {
+            steps {
+                sh 'mvn sonar:sonar -Dsonar.host.url=http://34.125.101.153:9000 -Dsonar.login=a09e1b372b37e7d19cc9c35cbe0baed779708f71'
+            }
+			}
+		stage('Deploy') {
+            steps {
+                sh 'mvn deploy'
+            }
+			}	
+        }
+    }
+
